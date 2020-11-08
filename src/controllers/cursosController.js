@@ -1,21 +1,53 @@
 const cursos = require('../models/cursos')
 
 const getAll = (req, res) => {
-    res.status(200).send({ message: "pegar todos os cursos"})
-}
+    console.log(req.body);
+    cursos.find(function(err, cursos){
+    res.status(200).send(cursos)
+    })    
+};
 
 const getPorTurno = (req, res) => {
     const parametros = req.query
-    console.log(parametros)
-    res.status(200).send({ message: "pegar todos os cursos por turno"})
+
+    cursos.find(parametros, function (err, cursos){
+        if(err) {
+            res.status(500).send({message: err.message})
+        } else {
+            res.status(200).send(cursos)
+        }
+    })   
 }
+
+// Exemplo de Talita
+// const getById = (req, res) => {
+//     cursos.find({ id: req.params.id }, (err, cursos) => {
+//         if(err) {
+//             res.status().send({ message: err.message})
+//         }
+//         res.status(200).send(cursos)
+//     })
+// }   
 
 const getById = (req, res) => {
-    res.status(200).send({ message: "pegar todos os cursos por id"})
+    const id = req.params.id;
+    cursos.find({ id }, function(err, curso){
+        if(err) {
+            res.status(500).send({message: err.message})
+        }
+        res.status(200).send(curso)
+    }) 
 }
+     
 
 const getBootcamps = (req, res) => {
-    res.status(200).send({ message: "pegar todos os cursos por que são do tipo bootcamp"})
+       cursos.find({bootcamp: true}, function(err, curso){
+        if(err) {
+            res.status(500).send({message: err.message})
+        }
+        res.status(200).send(curso)
+    })
+    
 }
 
 const getCursosGratuitos = (req, res) => {
@@ -27,7 +59,16 @@ const getCursosPagos = (req, res) => {
 }
 
 const postCurso = (req, res) => {
-    res.status(200).send({ message: "registrar um curso"})
+    console.log(req.body)
+    let curso = new cursos(req.body)
+
+    curso.save(function(err) {
+        if(err) {
+            res.status(500).send({message: err.message})
+        }
+        res.status(201).send({ message: "Curso resgistrado com sucesso!!"})
+    })
+    
 }
 
 const deleteCurso = (req, res) => {
